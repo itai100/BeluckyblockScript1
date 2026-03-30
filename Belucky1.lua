@@ -4,9 +4,7 @@ local Window = Rayfield:CreateWindow({
    Name = "Rebirth Mania Script 🎁",
    LoadingTitle = "Itay Hub",
    LoadingSubtitle = "by Itay",
-   ConfigurationSaving = {
-      Enabled = false
-   },
+   ConfigurationSaving = { Enabled = false },
    KeySystem = false
 })
 
@@ -19,7 +17,7 @@ Rayfield:Notify({
 })
 
 ----------------------------------------------------
--- 🔥 AUTO FARM BOSS
+-- 🔥 AUTO FARM BOSS (מתוקן)
 ----------------------------------------------------
 
 local AutoFarm = false
@@ -36,7 +34,6 @@ MainTab:CreateToggle({
                local player = game.Players.LocalPlayer
                local character = player.Character or player.CharacterAdded:Wait()
                local root = character:WaitForChild("HumanoidRootPart")
-               local humanoid = character:WaitForChild("Humanoid")
                local userId = player.UserId
 
                local modelsFolder = workspace:WaitForChild("RunningModels")
@@ -44,49 +41,42 @@ MainTab:CreateToggle({
 
                -- טלפורט התחלה
                root.CFrame = CFrame.new(715, 39, -2122)
-               task.wait(0.3)
-
-               humanoid:MoveTo(Vector3.new(710, 39, -2122))
+               task.wait(0.5)
 
                local ownedModel = nil
+               local startTime = tick()
 
+               -- חיפוש מודל (עם הגנה מלהיתקע)
                repeat
-                  task.wait(0.3)
                   for _, obj in ipairs(modelsFolder:GetChildren()) do
                      if obj:IsA("Model") and obj:GetAttribute("OwnerId") == userId then
                         ownedModel = obj
                         break
                      end
                   end
-               until ownedModel ~= nil or not AutoFarm
+                  task.wait(0.2)
+               until ownedModel or tick() - startTime > 5 or not AutoFarm
 
                if not AutoFarm then break end
+               if not ownedModel then continue end
 
                -- שולח לבוס
                if ownedModel.PrimaryPart then
                   ownedModel:SetPrimaryPartCFrame(target.CFrame)
                end
 
-               task.wait(0.7)
+               task.wait(0.5)
 
                -- דחיפה פנימה
-               if ownedModel and ownedModel.Parent == modelsFolder then
+               if ownedModel.Parent == modelsFolder then
                   ownedModel:SetPrimaryPartCFrame(target.CFrame * CFrame.new(0, -5, 0))
                end
 
-               -- מחכה שיסתיים
+               -- מחכה שייעלם (עם timeout)
+               local startTime2 = tick()
                repeat
-                  task.wait(0.3)
-               until not AutoFarm or (ownedModel == nil or ownedModel.Parent ~= modelsFolder)
-
-               if not AutoFarm then break end
-
-               -- ריספון
-               local oldCharacter = player.Character
-               repeat task.wait(0.2)
-               until not AutoFarm or (player.Character ~= oldCharacter)
-
-               if not AutoFarm then break end
+                  task.wait(0.2)
+               until not AutoFarm or ownedModel.Parent ~= modelsFolder or tick() - startTime2 > 5
 
                task.wait(0.5)
             end
@@ -96,7 +86,7 @@ MainTab:CreateToggle({
 })
 
 ----------------------------------------------------
--- 💰 AUTO PLACE + SELL (5 דקות)
+-- 💰 AUTO PLACE + SELL
 ----------------------------------------------------
 
 local AutoManage = false
@@ -111,12 +101,7 @@ MainTab:CreateToggle({
          task.spawn(function()
             while AutoManage do
 
-               -- ⏱ כל 5 דקות
-               task.wait(300)
-
-               if not AutoManage then break end
-
-               -- 🔥 שם הכי טובים
+               -- 🔥 פעם ראשונה מיד
                pcall(function()
                   game:GetService("ReplicatedStorage")
                   :WaitForChild("Packages")
@@ -130,10 +115,8 @@ MainTab:CreateToggle({
                   :InvokeServer()
                end)
 
-               -- ⏱ 5 שניות אחרי
                task.wait(5)
 
-               -- 💰 מוכר הכל
                pcall(function()
                   game:GetService("ReplicatedStorage")
                   :WaitForChild("Packages")
@@ -146,6 +129,12 @@ MainTab:CreateToggle({
                   :WaitForChild("SellAllBrainrots")
                   :InvokeServer()
                end)
+
+               -- ⏱ כל 5 דקות
+               for i = 1, 300 do
+                  if not AutoManage then break end
+                  task.wait(1)
+               end
 
             end
          end)
