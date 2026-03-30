@@ -17,7 +17,7 @@ Rayfield:Notify({
 })
 
 ----------------------------------------------------
--- 🔥 AUTO FARM BOSS (מתוקן)
+-- 🔥 AUTO FARM BOSS
 ----------------------------------------------------
 
 local AutoFarm = false
@@ -78,7 +78,17 @@ MainTab:CreateToggle({
                   task.wait(0.2)
                until not AutoFarm or ownedModel.Parent ~= modelsFolder or tick() - startTime2 > 5
 
-               task.wait(0.5)
+               if not AutoFarm then break end
+
+               -- ⏱ Respawn / ספאון מחדש - מחכה שנייה
+               local oldCharacter = player.Character
+               repeat
+                  task.wait(0.2)
+               until not AutoFarm or (player.Character ~= oldCharacter and player.Character ~= nil)
+               
+               if not AutoFarm then break end
+               task.wait(1) -- ההמתנה הנוספת אחרי Spawn
+
             end
          end)
       end
@@ -86,7 +96,7 @@ MainTab:CreateToggle({
 })
 
 ----------------------------------------------------
--- 💰 AUTO PLACE + SELL
+-- 💰 AUTO PLACE + SELL (כל 5 דקות)
 ----------------------------------------------------
 
 local AutoManage = false
@@ -101,7 +111,7 @@ MainTab:CreateToggle({
          task.spawn(function()
             while AutoManage do
 
-               -- 🔥 פעם ראשונה מיד
+               -- 🔥 עושה מיד בהתחלה
                pcall(function()
                   game:GetService("ReplicatedStorage")
                   :WaitForChild("Packages")
@@ -115,7 +125,7 @@ MainTab:CreateToggle({
                   :InvokeServer()
                end)
 
-               task.wait(5)
+               task.wait(5) -- מחכה 5 שניות לפני שמוכר הכל
 
                pcall(function()
                   game:GetService("ReplicatedStorage")
@@ -130,7 +140,7 @@ MainTab:CreateToggle({
                   :InvokeServer()
                end)
 
-               -- ⏱ כל 5 דקות
+               -- ⏱ חכה 5 דקות לפני הסיבוב הבא
                for i = 1, 300 do
                   if not AutoManage then break end
                   task.wait(1)
