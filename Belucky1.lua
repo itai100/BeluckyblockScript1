@@ -5,46 +5,28 @@ local Window = Rayfield:CreateWindow({
    LoadingTitle = "Itay Hub",
    LoadingSubtitle = "by Itay",
    ConfigurationSaving = {
-      Enabled = false,
-      FolderName = nil,
-      FileName = "Big Hub"
+      Enabled = false
    },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = true,
-   KeySettings = {
-      Title = "Rebirth Mania | key 🔑 ",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = true,
-      Key = {"https://pastebin.com/raw/WXng6d0M"}
-   }
+   KeySystem = false
 })
 
 local MainTab = Window:CreateTab("🎁Home", nil)
-local MainSection = MainTab:CreateSection("Teleport")    
 
 Rayfield:Notify({
-   Title = "You executed the script",
-   Content = "GL",
+   Title = "Script Loaded",
+   Content = "GL 🔥",
    Duration = 5,
 })
 
 ----------------------------------------------------
--- 🔥 AUTO FARM BOSS 18
+-- 🔥 AUTO FARM BOSS
 ----------------------------------------------------
 
 local AutoFarm = false
 
 MainTab:CreateToggle({
-   Name = "Auto Farm Boss 18 🧠",
+   Name = "Auto Farm Boss 🧠",
    CurrentValue = false,
-   Flag = "AutoFarmBoss18",
    Callback = function(Value)
       AutoFarm = Value
       
@@ -83,25 +65,13 @@ MainTab:CreateToggle({
                -- שולח לבוס
                if ownedModel.PrimaryPart then
                   ownedModel:SetPrimaryPartCFrame(target.CFrame)
-               else
-                  local part = ownedModel:FindFirstChildWhichIsA("BasePart")
-                  if part then
-                     part.CFrame = target.CFrame
-                  end
                end
 
                task.wait(0.7)
 
                -- דחיפה פנימה
                if ownedModel and ownedModel.Parent == modelsFolder then
-                  if ownedModel.PrimaryPart then
-                     ownedModel:SetPrimaryPartCFrame(target.CFrame * CFrame.new(0, -5, 0))
-                  else
-                     local part = ownedModel:FindFirstChildWhichIsA("BasePart")
-                     if part then
-                        part.CFrame = target.CFrame * CFrame.new(0, -5, 0)
-                     end
-                  end
+                  ownedModel:SetPrimaryPartCFrame(target.CFrame * CFrame.new(0, -5, 0))
                end
 
                -- מחכה שיסתיים
@@ -113,19 +83,70 @@ MainTab:CreateToggle({
 
                -- ריספון
                local oldCharacter = player.Character
-               repeat
-                  task.wait(0.2)
-               until not AutoFarm or (player.Character ~= oldCharacter and player.Character ~= nil)
+               repeat task.wait(0.2)
+               until not AutoFarm or (player.Character ~= oldCharacter)
 
                if not AutoFarm then break end
 
-               task.wait(0.4)
+               task.wait(0.5)
+            end
+         end)
+      end
+   end,
+})
 
-               local newChar = player.Character
-               local newRoot = newChar:WaitForChild("HumanoidRootPart")
+----------------------------------------------------
+-- 💰 AUTO PLACE + SELL (5 דקות)
+----------------------------------------------------
 
-               newRoot.CFrame = CFrame.new(737, 39, -2118)
-               task.wait(2)
+local AutoManage = false
+
+MainTab:CreateToggle({
+   Name = "Auto Place + Sell 💰",
+   CurrentValue = false,
+   Callback = function(Value)
+      AutoManage = Value
+
+      if AutoManage then
+         task.spawn(function()
+            while AutoManage do
+
+               -- ⏱ כל 5 דקות
+               task.wait(300)
+
+               if not AutoManage then break end
+
+               -- 🔥 שם הכי טובים
+               pcall(function()
+                  game:GetService("ReplicatedStorage")
+                  :WaitForChild("Packages")
+                  :WaitForChild("_Index")
+                  :WaitForChild("sleitnick_knit@1.7.0")
+                  :WaitForChild("knit")
+                  :WaitForChild("Services")
+                  :WaitForChild("ContainerService")
+                  :WaitForChild("RF")
+                  :WaitForChild("PlaceBest")
+                  :InvokeServer()
+               end)
+
+               -- ⏱ 5 שניות אחרי
+               task.wait(5)
+
+               -- 💰 מוכר הכל
+               pcall(function()
+                  game:GetService("ReplicatedStorage")
+                  :WaitForChild("Packages")
+                  :WaitForChild("_Index")
+                  :WaitForChild("sleitnick_knit@1.7.0")
+                  :WaitForChild("knit")
+                  :WaitForChild("Services")
+                  :WaitForChild("InventoryService")
+                  :WaitForChild("RF")
+                  :WaitForChild("SellAllBrainrots")
+                  :InvokeServer()
+               end)
+
             end
          end)
       end
